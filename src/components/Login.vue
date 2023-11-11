@@ -5,11 +5,11 @@
                 <img src="/img/logo.png" class="login-card__icon" alt="">
                 <h2>User Login</h2>
             </div>
-            <form action="#">
+            <form action="#" @submit.prevent="handelSubmit">
                 <label for="" class="block">Email</label>
-                <input type="email" placeholder="Enter your email">
+                <input type="email" placeholder="Enter your email" v-model="formData.email" ref="email" required>
                 <label class="mt-3 block" for="">Password</label>
-                <input type="password" placeholder="Enter your password">
+                <input type="password" placeholder="Enter your password" v-model="formData.password" required ref="password">
                 <button type="submit" class="block mt-4 button-login">Login</button>
                 <div class="d-flex jc-between mt-3">
                     <div>
@@ -27,8 +27,38 @@
     </div>
 </template>
 <script>
+
 export default {
-    name: "Login"
+    name: "Login",
+    data() {
+        return {
+            formData:{
+                email:'',
+                password:''
+            }
+        }
+    }
+    ,
+    methods: {
+        handelSubmit() {
+            if(!this.formData.email){
+                this.$eventBus.emit("toast",{
+                    type:"Error",
+                    message:"Email cannot be empty.."
+                });
+                this.$refs.email.focus();
+                return;
+            }
+            if(this.formData.password.length<5){
+                this.$eventBus.emit("toast",{
+                    type:"Error",
+                    message:"Password must be at last 6 digit."
+                });
+                this.$refs.password.focus();
+                return;
+            }
+        }
+    }
 }
 </script>
 <style>
