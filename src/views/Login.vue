@@ -6,11 +6,12 @@
                 <h2>User Login</h2>
             </div>
             <form action="#" @submit.prevent="handelSubmit">
-                <label for="" class="block">Email</label>
-                <input type="email" placeholder="Enter your email" v-model="formData.email" ref="email" required>
+                <label for="" class="block">Username</label>
+                <input type="text" placeholder="Enter your username" v-model="formData.username" ref="username" required>
                 <label class="mt-3 block" for="">Password</label>
-                <input type="password" placeholder="Enter your password" v-model="formData.password" required ref="password">
-                <button type="submit" class="block mt-4 button-login">Login</button>
+                <input type="password" placeholder="Enter your password" v-model="formData.password" required
+                    ref="password">
+                <TheButton :block="true" :loading="logging" class="mt-3">Login</TheButton>
                 <div class="d-flex jc-between mt-3">
                     <div>
                         <label>
@@ -27,36 +28,59 @@
     </div>
 </template>
 <script>
-
+import axios from 'axios';
+import TheButton from '../components/TheButton.vue';
 export default {
     name: "Login",
+    components: {
+        TheButton
+    },
     data() {
         return {
-            formData:{
-                email:'',
-                password:''
-            }
+            formData: {
+                username: '',
+                password: ''
+            },
+            logging: false,
         }
     }
     ,
     methods: {
         handelSubmit() {
-            if(!this.formData.email){
-                this.$eventBus.emit("toast",{
-                    type:"Error",
-                    message:"Email cannot be empty.."
+            if (!this.formData.username) {
+                this.$eventBus.emit("toast", {
+                    type: "Error",
+                    message: "Username cannot be empty.."
                 });
                 this.$refs.email.focus();
                 return;
             }
-            if(this.formData.password.length<5){
-                this.$eventBus.emit("toast",{
-                    type:"Error",
-                    message:"Password must be at last 6 digit."
+            if (this.formData.password.length < 5) {
+                this.$eventBus.emit("toast", {
+                    type: "Error",
+                    message: "Password must be at last 6 digit."
                 });
                 this.$refs.password.focus();
                 return;
             }
+            this.logging = true;
+            axios.post("https://api.rimoned.com/api/pharmacy-management/v1/login",
+                this.formData).then((res) => {
+                    this.$eventBus.emit("toast", {
+                        type: "Success",
+                        message: res.data.message
+                    });
+                    localStorage.setItem("accessToken", res.data.accessToken);
+                    this.$router.push('/dashboard');
+                }).catch(err => {
+                    this.$eventBus.emit("toast", {
+                        type: "Error",
+                        message: err.response.data.message
+                    });
+                }).finally(() => {
+                    this.logging = false;
+                })
+
         }
     }
 }

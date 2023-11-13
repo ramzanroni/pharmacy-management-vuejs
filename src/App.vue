@@ -1,16 +1,14 @@
 <template>
-  <login />
+  <router-view></router-view>
     <TransitionGroup name="list" tag="div" class="toasts">
       <Toast v-for="(toast,i) in toasts" :key="i" :toastType="toast.type" :message="toast.message"></Toast>
   </TransitionGroup>
 </template>
 <script>
-import Login from './components/Login.vue';
 import Toast from './components/Toast.vue';
 export default {
   name: 'App',
   components: {
-    Login,
     Toast
   },
   data(){
