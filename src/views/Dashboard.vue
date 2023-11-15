@@ -8,7 +8,7 @@
                 <TheHeader></TheHeader>
             </div>
             <div class="dashboard__main">
-                
+                <router-view></router-view>
             </div>
         </div>
     </div>
