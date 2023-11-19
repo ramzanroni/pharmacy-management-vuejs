@@ -6,10 +6,16 @@ const Drugs =()=> import('../views/dashboard/Drugs.vue');
 const SellingHistory =()=> import('../views/dashboard/SellingHistory.vue');
 const Settings =()=> import('../views/dashboard/Settings.vue');
 const Vendors =()=> import('../views/dashboard/Vendors.vue');
+const Test =()=> import('../views/dashboard/Test.vue');
+
 const routes=[
     {
         path:"/",
         component: LoginPage
+    },
+    {
+        path:'/test',
+        component: Test
     },
     {
         path:"/dashboard",
@@ -19,19 +25,23 @@ const routes=[
             {
                 path:'overview',
                 component: Overview
-            }, {
+            }, 
+            {
                 path:'drugs',
                 component: Drugs
-            }, {
+            }, 
+            {
                 path:'selling-history',
                 component: SellingHistory
-            }, {
+            },
+            {
                 path:'vendors',
                 component: Vendors
-            }, {
+            }, 
+            {
                 path:'settings',
                 component: Settings
-            },
+            }
         ]
     }
 ];
