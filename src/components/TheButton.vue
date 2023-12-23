@@ -1,5 +1,5 @@
 <template>
-    <div class="the-button" :class="{ 'the-button--block': block }">
+    <div class="the-button" :class="{ 'the-button--block': block, 'the-button--gray': color=='gray' }">
         <button>
             <slot></slot>
         </button>
@@ -19,7 +19,11 @@ export default {
         block: {
             type: Boolean,
             default: false
-        }
+        },
+      color:{
+          type:String,
+          default:'none'
+      }
     }
 }
 </script>
@@ -81,4 +85,14 @@ export default {
     background-color: #4d4d4d;
     border-color: #4d4d4d;
 }
+
+.the-button--gray button{
+  background-color: #707070;
+  border-color: #707070;
+}
+.the-button--gray button:hover{
+  background-color: #4d4d4d;
+  border-color: #4d4d4d;
+}
+
 </style>

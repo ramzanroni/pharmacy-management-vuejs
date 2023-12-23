@@ -19,8 +19,8 @@
         </td>
         <td>{{ vendor.description }}</td>
         <td>
-          <img src="/img/edit.png" alt="" class="action-icon" />
-          <img src="/img/trash.png" alt="" class="action-icon action-icon--delete ml-3" />
+          <img @click="editFormData=vendor; editModel=true;" src="/img/edit.png" alt="" class="action-icon" />
+          <img @click="selectedVendor=vendor; deleteModel=true; " src="/img/trash.png" alt="" class="action-icon action-icon--delete ml-3" />
         </td>
       </tr>
     </tbody>
@@ -33,8 +33,27 @@
 
       <label for="" class="block mt-3">Sort Description</label>
       <input type="text" placeholder="Enter sort description" class="mt-1 w-100" required v-model="newVendor.description">
-      <the-button class="mt-3" :loading="loading">Add</the-button>
+      <the-button class="mt-3" :loading="adding">Add</the-button>
     </form>
+  </TheModal>
+
+  <TheModal v-model="editModel" heading="Update vendor">
+    <form @submit.prevent="editVendor">
+      <label for="" class="block">Vendor Name</label>
+      <input type="text" placeholder="Enter vendor name" class="mt-1 w-100" required v-model="editFormData.name">
+
+      <label for="" class="block mt-3">Sort Description</label>
+      <input type="text" placeholder="Enter sort description" class="mt-1 w-100" required v-model="editFormData.description">
+      <the-button class="mt-3" :loading="editing">Update</the-button>
+    </form>
+  </TheModal>
+
+  <TheModal v-model="deleteModel" heading="Are you sure?">
+    <p>
+      Do you really want to delete <strong>{{selectedVendor.name}}</strong> ?
+    </p>
+    <the-button class="mt-4" @click="deleteVendor" :loading="deleting">Yes</the-button>
+    <the-button class="mt-4 ml-4" color="gray" @click="deleteModel=false">No</the-button>
   </TheModal>
 </template>
   
@@ -47,11 +66,22 @@ export default {
   data() {
     return {
       addModal: false,
+      deleteModel:false,
+      editModel:false,
+
       newVendor: {
         name: '',
         description: ''
       },
+      editFormData: {
+        name: '',
+        description: ''
+      },
+      selectedVendor:{},
+      selectedVendorEdit:{},
       adding: false,
+      editing:false,
+      deleting:false,
       vendors:[],
       gettingVendors:false,
     }
@@ -61,9 +91,8 @@ export default {
     TheModal
   },
   mounted(){
-    console.log(localStorage.getItem("accessToken"));
     this.getAllVendors();
-  }, 
+  },
   methods: {
     getAllVendors(){
       this.gettingVendors=true;
@@ -103,6 +132,8 @@ export default {
           });
           this.addModal=false;
           this.resetForm();
+          this.vendors=[];
+          this.getAllVendors();
         }).catch(err => {
           this.$eventBus.emit("toast", {
             type: "Error",
@@ -111,6 +142,56 @@ export default {
         }).finally(() => {
           this.adding = false;
         })
+    },
+    deleteVendor(){
+      this.deleting = true;
+      axios.delete("https://api.rimoned.com/api/pharmacy-management/v1/private/vendor/"+this.selectedVendor._id,
+          {
+            headers:{
+              authorization:localStorage.getItem("accessToken")
+            }
+          }).then((res) => {
+        this.$eventBus.emit("toast", {
+          type: "Success",
+          message: res.data.message
+        });
+        this.deleteModel=false;
+        this.vendors=[];
+        this.getAllVendors();
+      }).catch(err => {
+        this.$eventBus.emit("toast", {
+          type: "Error",
+          message: err.response.data.message
+        });
+      }).finally(() => {
+        this.deleting = false;
+      })
+    },
+    editVendor(){
+
+      this.adding = true;
+      axios.put("https://api.rimoned.com/api/pharmacy-management/v1/private/vendor/"+this.editFormData._id,
+          this.editFormData,{
+            headers:{
+              authorization:localStorage.getItem("accessToken")
+            }
+          }).then((res) => {
+        this.$eventBus.emit("toast", {
+          type: "Success",
+          message: res.data.message
+        });
+        this.editModel=false;
+        this.resetForm();
+        this.vendors=[];
+        this.getAllVendors();
+      }).catch(err => {
+        this.$eventBus.emit("toast", {
+          type: "Error",
+          message: err.response.data.message
+        });
+      }).finally(() => {
+        this.editing = false;
+      })
     }
   }
 };
