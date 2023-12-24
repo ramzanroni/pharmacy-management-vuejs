@@ -16,12 +16,16 @@
 <script>
 import TheSidebarVue from '../components/TheSidebar.vue';
 import TheHeader from '../components/TheHeader.vue';
+import {setPrivateHeader} from "../service/axiosInstance.js";
 export default{
     name:"Dashboard",
     components:{
         TheSidebarVue,
         TheHeader
-    }
+    },
+  mounted() {
+    setPrivateHeader();
+  }
 }
 </script>
 

@@ -30,6 +30,7 @@
 <script>
 import axios from 'axios';
 import TheButton from '../components/TheButton.vue';
+import {setPrivateHeader} from "../service/axiosInstance.js";
 export default {
     name: "Login",
     components: {
@@ -71,6 +72,7 @@ export default {
                         message: res.data.message
                     });
                     localStorage.setItem("accessToken", res.data.accessToken);
+                    setPrivateHeader();
                     this.$router.push('/dashboard');
                 }).catch(err => {
                     this.$eventBus.emit("toast", {

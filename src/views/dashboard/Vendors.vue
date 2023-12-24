@@ -61,6 +61,7 @@
 import TheButton from "../../components/TheButton.vue";
 import TheModal from "../../components/TheModal.vue";
 import axios from "axios";
+import privateService from "../../service/privateService.js";
 export default {
   name: 'Vendors',
   data() {
@@ -96,12 +97,7 @@ export default {
   methods: {
     getAllVendors(){
       this.gettingVendors=true;
-      axios.get("https://api.rimoned.com/api/pharmacy-management/v1/private/vendor",
-        {
-          headers:{
-            authorization:localStorage.getItem("accessToken")
-          }
-        }).then((res) => {
+      privateService.getVendors().then((res) => {
           this.vendors=res.data;
         }).catch(err => {
           this.$eventBus.emit("toast", {
@@ -120,12 +116,7 @@ export default {
     },
     addNew() {
       this.adding = true;
-      axios.post("https://api.rimoned.com/api/pharmacy-management/v1/private/vendor",
-        this.newVendor,{
-          headers:{
-            authorization:localStorage.getItem("accessToken")
-          }
-        }).then((res) => {
+     privateService.addVendor(this.newVendor).then((res) => {
           this.$eventBus.emit("toast", {
             type: "Success",
             message: res.data.message
@@ -145,12 +136,8 @@ export default {
     },
     deleteVendor(){
       this.deleting = true;
-      axios.delete("https://api.rimoned.com/api/pharmacy-management/v1/private/vendor/"+this.selectedVendor._id,
-          {
-            headers:{
-              authorization:localStorage.getItem("accessToken")
-            }
-          }).then((res) => {
+
+     privateService.deleteVendor(this.selectedVendor._id).then((res) => {
         this.$eventBus.emit("toast", {
           type: "Success",
           message: res.data.message
@@ -170,12 +157,7 @@ export default {
     editVendor(){
 
       this.adding = true;
-      axios.put("https://api.rimoned.com/api/pharmacy-management/v1/private/vendor/"+this.editFormData._id,
-          this.editFormData,{
-            headers:{
-              authorization:localStorage.getItem("accessToken")
-            }
-          }).then((res) => {
+     privateService.editVendor(this.editFormData).then((res) => {
         this.$eventBus.emit("toast", {
           type: "Success",
           message: res.data.message
